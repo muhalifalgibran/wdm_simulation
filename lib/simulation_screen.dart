@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
+import 'package:wdm_simulation/map_topology.dart';
 
 class SimulationScreen extends StatefulWidget {
   const SimulationScreen({Key? key}) : super(key: key);
@@ -15,96 +16,115 @@ class _SimulationScreenState extends State<SimulationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Wrap(
-          children: [
-            Container(
-              width: 100,
-              child: TextFormField(
-                initialValue: builder.siblingSeparation.toString(),
-                decoration: InputDecoration(labelText: "Sibling Separation"),
-                onChanged: (text) {
-                  builder.siblingSeparation = int.tryParse(text) ?? 100;
-                  setState(() {});
-                },
+        body: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.start,
+            children: [
+              // Container(
+              //   width: 100,
+              //   child: TextFormField(
+              //     initialValue: builder.siblingSeparation.toString(),
+              //     decoration: InputDecoration(labelText: "Sibling Separation"),
+              //     onChanged: (text) {
+              //       builder.siblingSeparation = int.tryParse(text) ?? 100;
+              //       setState(() {});
+              //     },
+              //   ),
+              // ),
+              // Container(
+              //   width: 100,
+              //   child: TextFormField(
+              //     initialValue: builder.levelSeparation.toString(),
+              //     decoration: InputDecoration(labelText: "Level Separation"),
+              //     onChanged: (text) {
+              //       builder.levelSeparation = int.tryParse(text) ?? 100;
+              //       setState(() {});
+              //     },
+              //   ),
+              // ),
+              // Container(
+              //   width: 100,
+              //   child: TextFormField(
+              //     initialValue: builder.subtreeSeparation.toString(),
+              //     decoration: InputDecoration(labelText: "Subtree separation"),
+              //     onChanged: (text) {
+              //       builder.subtreeSeparation = int.tryParse(text) ?? 100;
+              //       setState(() {});
+              //     },
+              //   ),
+              // ),
+              // Container(
+              //   width: 100,
+              //   child: TextFormField(
+              //     initialValue: builder.orientation.toString(),
+              //     decoration: InputDecoration(labelText: "Orientation"),
+              //     onChanged: (text) {
+              //       builder.orientation = int.tryParse(text) ?? 100;
+              //       setState(() {});
+              //     },
+              //   ),
+              // ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     final node12 = Node.Id(r.nextInt(100));
+              //     var edge =
+              //         graph.getNodeAtPosition(r.nextInt(graph.nodeCount()));
+              //     print(edge);
+              //     graph.addEdge(edge, node12);
+              //     setState(() {});
+              //   },
+              //   child: Text("Add"),
+              // )
+            ],
+          ),
+          const Text(
+            'Topology',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
+          ),
+          Text(
+            'Number of Nodes: ${topologyData['nodes']?.map((e) => e).toList().length}',
+            style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+          ),
+          Text(
+            'Number of Edge: ${topologyData['edges']?.map((e) => e).toList().length}',
+            style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+          ),
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: InteractiveViewer(
+                constrained: false,
+                boundaryMargin: EdgeInsets.all(100),
+                minScale: 0.01,
+                maxScale: 0.5,
+                child: GraphView(
+                  graph: graph,
+                  algorithm: FruchtermanReingoldAlgorithm(),
+                  paint: Paint()
+                    ..color = Colors.green
+                    ..strokeWidth = 10
+                    ..strokeCap = StrokeCap.round
+                    ..style = PaintingStyle.stroke,
+                  builder: (Node node) {
+                    // I can decide what widget should be shown here based on the id
+                    var a = node.key?.value as int;
+                    return rectangleWidget(a);
+                  },
+                ),
               ),
-            ),
-            Container(
-              width: 100,
-              child: TextFormField(
-                initialValue: builder.levelSeparation.toString(),
-                decoration: InputDecoration(labelText: "Level Separation"),
-                onChanged: (text) {
-                  builder.levelSeparation = int.tryParse(text) ?? 100;
-                  setState(() {});
-                },
-              ),
-            ),
-            Container(
-              width: 100,
-              child: TextFormField(
-                initialValue: builder.subtreeSeparation.toString(),
-                decoration: InputDecoration(labelText: "Subtree separation"),
-                onChanged: (text) {
-                  builder.subtreeSeparation = int.tryParse(text) ?? 100;
-                  setState(() {});
-                },
-              ),
-            ),
-            Container(
-              width: 100,
-              child: TextFormField(
-                initialValue: builder.orientation.toString(),
-                decoration: InputDecoration(labelText: "Orientation"),
-                onChanged: (text) {
-                  builder.orientation = int.tryParse(text) ?? 100;
-                  setState(() {});
-                },
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final node12 = Node.Id(r.nextInt(100));
-                var edge =
-                    graph.getNodeAtPosition(r.nextInt(graph.nodeCount()));
-                print(edge);
-                graph.addEdge(edge, node12);
-                setState(() {});
-              },
-              child: Text("Add"),
-            )
-          ],
-        ),
-        Expanded(
-          child: InteractiveViewer(
-            constrained: false,
-            boundaryMargin: EdgeInsets.all(100),
-            minScale: 0.01,
-            maxScale: 5.6,
-            child: GraphView(
-              graph: graph,
-              algorithm: FruchtermanReingoldAlgorithm(
-                  // builder,
-                  // ArrowEdgeRenderer(),
-                  // repulsionRate: 0,
-                  // attractionPercentage: ,
-                  attractionRate: 0.2),
-              paint: Paint()
-                ..color = Colors.green
-                ..strokeWidth = 200
-                ..strokeCap = StrokeCap.round
-                ..style = PaintingStyle.stroke,
-              builder: (Node node) {
-                // I can decide what widget should be shown here based on the id
-                var a = node.key?.value as int;
-                return rectangleWidget(a);
-              },
             ),
           ),
-        ),
-      ],
+          Text(
+            'Topology',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
+          ),
+        ],
+      ),
     ));
   }
 
@@ -131,52 +151,28 @@ class _SimulationScreenState extends State<SimulationScreen> {
   BuchheimWalkerConfiguration builder = BuchheimWalkerConfiguration();
   SugiyamaConfiguration builder2 = SugiyamaConfiguration();
   late Edge a;
+
+  List<Map<String, dynamic>> edges = [];
   @override
   void initState() {
     super.initState();
-    final node1 = Node.Id(1);
-    final node2 = Node.Id(2);
-    final node3 = Node.Id(3);
-    final node4 = Node.Id(4);
-    final node5 = Node.Id(5);
-    final node6 = Node.Id(6);
-    final node8 = Node.Id(7);
-    final node7 = Node.Id(8);
-    final node9 = Node.Id(9);
-    final node10 = Node.Id(10);
-    final node11 = Node.Id(11);
-    final node12 = Node.Id(12);
 
-    graph.addEdge(node1, node2);
-    graph.addEdge(
-      node1,
-      node3,
-      paint: Paint()
-        ..color = Colors.red
-        ..strokeWidth = 13,
-    );
-    graph.addEdge(node1, node4, paint: Paint()..color = Colors.blue);
-    graph.addEdge(node2, node5);
-    graph.addEdge(node2, node6);
-    graph.addEdge(node6, node7, paint: Paint()..color = Colors.red);
-    graph.addEdge(node6, node8, paint: Paint()..color = Colors.red);
-    a = graph.addEdge(node4, node9);
-    graph.addEdge(node4, node10, paint: Paint()..color = Colors.black);
-    graph.addEdge(node4, node11, paint: Paint()..color = Colors.red);
-    graph.addEdge(node11, node12);
-    graph.addEdge(node1, node12);
-    graph.addEdge(node7, node12);
+    edges = topologyData['edges']!.map((e) => e).toList();
 
-    graph.removeEdge(Edge(node4, node9));
-    graph.removeEdge(Edge(node4, node10));
+    for (var element in edges) {
+      var fromNodeId = element['from'];
+      var toNodeId = element['to'];
+      graph.addEdge(Node.Id(fromNodeId), Node.Id(toNodeId));
+      print('object');
+    }
 
-    builder
-      ..siblingSeparation = (100)
-      ..levelSeparation = (150)
-      ..subtreeSeparation = (150)
-      ..orientation = (BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM);
+    // builder
+    //   ..siblingSeparation = (100)
+    //   ..levelSeparation = (150)
+    //   ..subtreeSeparation = (150)
+    //   ..orientation = (BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM);
 
-    changeColor();
+    // changeColor();
   }
 
   void changeColor() async {
