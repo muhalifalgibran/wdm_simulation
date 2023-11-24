@@ -8,6 +8,8 @@ var topologyData = {
     {"id": 6, "label": 'Node'},
     {"id": 7, "label": 'Node'},
     {"id": 8, "label": 'Node'},
+    {"id": 9, "label": 'Node'},
+    {"id": 10, "label": 'Node'},
   ],
   "edges": [
     {"from": 1, "to": 2},
@@ -20,5 +22,8 @@ var topologyData = {
     {"from": 1, "to": 8},
     {"from": 4, "to": 6},
     {"from": 7, "to": 2},
+    {"from": 9, "to": 3},
+    {"from": 10, "to": 9},
+    {"from": 10, "to": 4},
   ],
 };

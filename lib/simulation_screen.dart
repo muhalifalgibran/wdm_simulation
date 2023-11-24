@@ -94,6 +94,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
             'Number of Edge: ${topologyData['edges']?.map((e) => e).toList().length}',
             style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
           ),
+          const SizedBox(height: 20),
           Expanded(
             child: Container(
               color: Colors.grey,
@@ -104,7 +105,8 @@ class _SimulationScreenState extends State<SimulationScreen> {
                 maxScale: 0.5,
                 child: GraphView(
                   graph: graph,
-                  algorithm: FruchtermanReingoldAlgorithm(),
+                  algorithm: FruchtermanReingoldAlgorithm(
+                      attractionRate: 0, repulsionPercentage: 0.1),
                   paint: Paint()
                     ..color = Colors.green
                     ..strokeWidth = 10
@@ -138,12 +140,12 @@ class _SimulationScreenState extends State<SimulationScreen> {
       child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(200),
             boxShadow: [
-              BoxShadow(color: Colors.blue, spreadRadius: 1),
+              BoxShadow(color: Colors.cyanAccent, spreadRadius: 1),
             ],
           ),
-          child: Text('Node ${a}')),
+          child: Text('Node $a')),
     );
   }
 
@@ -153,26 +155,24 @@ class _SimulationScreenState extends State<SimulationScreen> {
   late Edge a;
 
   List<Map<String, dynamic>> edges = [];
+  List<Map<String, dynamic>> nodes = [];
   @override
   void initState() {
     super.initState();
 
     edges = topologyData['edges']!.map((e) => e).toList();
+    nodes = topologyData['nodes']!.map((e) => e).toList();
+
+    for (var element in nodes) {
+      var fromNodeId = element['id'];
+      graph.addNode(Node.Id(fromNodeId));
+    }
 
     for (var element in edges) {
       var fromNodeId = element['from'];
       var toNodeId = element['to'];
       graph.addEdge(Node.Id(fromNodeId), Node.Id(toNodeId));
-      print('object');
     }
-
-    // builder
-    //   ..siblingSeparation = (100)
-    //   ..levelSeparation = (150)
-    //   ..subtreeSeparation = (150)
-    //   ..orientation = (BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM);
-
-    // changeColor();
   }
 
   void changeColor() async {
