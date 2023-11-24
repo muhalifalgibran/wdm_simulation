@@ -154,23 +154,25 @@ class _SimulationScreenState extends State<SimulationScreen> {
   SugiyamaConfiguration builder2 = SugiyamaConfiguration();
   late Edge a;
 
-  List<Map<String, dynamic>> edges = [];
-  List<Map<String, dynamic>> nodes = [];
   @override
   void initState() {
     super.initState();
 
-    edges = topologyData['edges']!.map((e) => e).toList();
-    nodes = topologyData['nodes']!.map((e) => e).toList();
+    List<Map<String, dynamic>> edges =
+        topologyData['edges']!.map((e) => e).toList();
+    List<Map<String, dynamic>> nodes =
+        topologyData['nodes']!.map((e) => e).toList();
 
+    // initiate Nodes
     for (var element in nodes) {
       var fromNodeId = element['id'];
       graph.addNode(Node.Id(fromNodeId));
     }
 
+    // initiate Links
     for (var element in edges) {
-      var fromNodeId = element['from'];
-      var toNodeId = element['to'];
+      var fromNodeId = element['pair_node'];
+      var toNodeId = element['base_node'];
       graph.addEdge(Node.Id(fromNodeId), Node.Id(toNodeId));
     }
   }

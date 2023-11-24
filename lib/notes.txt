@@ -1,0 +1,35 @@
+
+// Djisktra
+simpan L nya dulu;
+l = {
+  '1': {
+    'base_node': 1
+    'pair_node': 2
+  },
+  '2': {
+    'base_node': 1
+    'pair_node': 3
+  },
+  ...
+}
+
+node information:
+ Node:
+  - links [Ls]
+  - pairs [Nodes]
+
+propagation
+node1: {
+  set the senderNode and receiverNode
+
+  currNode = senderNode
+  paths = []
+  -> do treversing
+  while (currNode != receiverNode)
+  -> randomly pick pairs from currNode
+  if base == 1
+    go to pair:
+  else if pair == 1
+    go to base:
+
+}
