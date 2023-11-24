@@ -31,5 +31,4 @@ node1: {
     go to pair:
   else if pair == 1
     go to base:
-
 }

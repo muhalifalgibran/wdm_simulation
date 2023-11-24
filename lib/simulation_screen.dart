@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
+import 'package:wdm_simulation/link.dart';
+import 'package:wdm_simulation/node.dart' as nd;
 import 'package:wdm_simulation/map_topology.dart';
 
 class SimulationScreen extends StatefulWidget {
@@ -154,6 +156,9 @@ class _SimulationScreenState extends State<SimulationScreen> {
   SugiyamaConfiguration builder2 = SugiyamaConfiguration();
   late Edge a;
 
+  List<Link> linksData = [];
+  List<nd.Node> nodesData = [];
+
   @override
   void initState() {
     super.initState();
@@ -167,19 +172,51 @@ class _SimulationScreenState extends State<SimulationScreen> {
     for (var element in nodes) {
       var fromNodeId = element['id'];
       graph.addNode(Node.Id(fromNodeId));
+      nd.Node n = nd.Node(
+        id: fromNodeId,
+        pairs: [],
+        links: [],
+      );
+      nodesData.add(n);
     }
 
     // initiate Links
     for (var element in edges) {
-      var fromNodeId = element['pair_node'];
-      var toNodeId = element['base_node'];
-      graph.addEdge(Node.Id(fromNodeId), Node.Id(toNodeId));
+      var pairNodeId = element['pair_node'];
+      var linkId = element['id'];
+      var baseNodeId = element['base_node'];
+      graph.addEdge(Node.Id(pairNodeId), Node.Id(baseNodeId));
+      Link l = Link(baseNode: pairNodeId, pairNode: baseNodeId, id: linkId);
+      linksData.add(l);
+    }
+
+    // rearrange the nodes
+    // - input node links
+    var nodeIndex = 0;
+    for (var node in nodesData) {
+      List<Link> links = [];
+      for (var link in linksData) {
+        if (node.id == link.pairNode || node.id == link.baseNode) {
+          links.add(link);
+          var a = node.copyWith(links: links);
+          nodesData[nodeIndex] = a;
+        }
+      }
+      nodeIndex += 1;
+    }
+
+    for (var y in nodesData) {
+      print(y.id.toString() +
+          ' ' +
+          y.links.toString() +
+          ' ' +
+          y.pairs.toString());
     }
   }
 
   void changeColor() async {
     var isBlue = false;
-    Timer.periodic(Duration(milliseconds: 750), (timer) {
+    Timer.periodic(const Duration(milliseconds: 750), (timer) {
       a.paint = Paint()..color = isBlue ? Colors.blue : Colors.red;
       isBlue = !isBlue;
       setState(() {});
