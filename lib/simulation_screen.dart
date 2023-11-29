@@ -24,66 +24,6 @@ class _SimulationScreenState extends State<SimulationScreen> {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            alignment: WrapAlignment.start,
-            children: [
-              // Container(
-              //   width: 100,
-              //   child: TextFormField(
-              //     initialValue: builder.siblingSeparation.toString(),
-              //     decoration: InputDecoration(labelText: "Sibling Separation"),
-              //     onChanged: (text) {
-              //       builder.siblingSeparation = int.tryParse(text) ?? 100;
-              //       setState(() {});
-              //     },
-              //   ),
-              // ),
-              // Container(
-              //   width: 100,
-              //   child: TextFormField(
-              //     initialValue: builder.levelSeparation.toString(),
-              //     decoration: InputDecoration(labelText: "Level Separation"),
-              //     onChanged: (text) {
-              //       builder.levelSeparation = int.tryParse(text) ?? 100;
-              //       setState(() {});
-              //     },
-              //   ),
-              // ),
-              // Container(
-              //   width: 100,
-              //   child: TextFormField(
-              //     initialValue: builder.subtreeSeparation.toString(),
-              //     decoration: InputDecoration(labelText: "Subtree separation"),
-              //     onChanged: (text) {
-              //       builder.subtreeSeparation = int.tryParse(text) ?? 100;
-              //       setState(() {});
-              //     },
-              //   ),
-              // ),
-              // Container(
-              //   width: 100,
-              //   child: TextFormField(
-              //     initialValue: builder.orientation.toString(),
-              //     decoration: InputDecoration(labelText: "Orientation"),
-              //     onChanged: (text) {
-              //       builder.orientation = int.tryParse(text) ?? 100;
-              //       setState(() {});
-              //     },
-              //   ),
-              // ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     final node12 = Node.Id(r.nextInt(100));
-              //     var edge =
-              //         graph.getNodeAtPosition(r.nextInt(graph.nodeCount()));
-              //     print(edge);
-              //     graph.addEdge(edge, node12);
-              //     setState(() {});
-              //   },
-              //   child: Text("Add"),
-              // )
-            ],
-          ),
           const Text(
             'Topology',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
@@ -93,7 +33,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
             style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
           ),
           Text(
-            'Number of Edge: ${topologyData['edges']?.map((e) => e).toList().length}',
+            'Number of Edges: ${topologyData['edges']?.map((e) => e).toList().length}',
             style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
           ),
           const SizedBox(height: 20),
@@ -123,7 +63,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
               ),
             ),
           ),
-          Text(
+          const Text(
             'Topology',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
           ),
@@ -186,7 +126,11 @@ class _SimulationScreenState extends State<SimulationScreen> {
       var linkId = element['id'];
       var baseNodeId = element['base_node'];
       graph.addEdge(Node.Id(pairNodeId), Node.Id(baseNodeId));
-      Link l = Link(baseNode: pairNodeId, pairNode: baseNodeId, id: linkId);
+      Link l = Link(
+        baseNode: baseNodeId,
+        pairNode: pairNodeId,
+        id: linkId,
+      );
       linksData.add(l);
     }
 
@@ -205,6 +149,19 @@ class _SimulationScreenState extends State<SimulationScreen> {
       nodeIndex += 1;
     }
 
+    // - input the node nodes
+    for (var node in nodesData) {
+      if (node.links!.isNotEmpty) {
+        for (var link in node.links!) {
+          if (link.pairNode == node.id) {
+            node.pairs!.add(link.baseNode);
+          } else if (link.baseNode == node.id) {
+            node.pairs!.add(link.pairNode);
+          }
+        }
+      }
+    }
+
     for (var y in nodesData) {
       print(y.id.toString() +
           ' ' +
@@ -212,6 +169,9 @@ class _SimulationScreenState extends State<SimulationScreen> {
           ' ' +
           y.pairs.toString());
     }
+
+    print(nodesData.first.links!.length);
+    print(nodesData.first.pairs!.length);
   }
 
   void changeColor() async {
